@@ -1,32 +1,25 @@
-/* Magic Mirror
- * Module: MMM-EyeCandy
- *
- * By Mykle1
- * MIT Licensed.
- */
 Module.register("MMM-EyeCandy", {
-    // Default module config.
     defaults: {
-        style: '1', // 1-52
-        maxWidth: "100%", // Adjusts size of images. Retains aspect ratio.
-        ownImagePath: '', // Overrides style. Local path or internet URL's.
-        updateInterval: 5 * 60 * 1000, // set in config.js
-        animationSpeed: 3000,
+        style: '1',
+        maxWidth: "100%", // adjusts the image size, retains aspect ratio
+        ownImagePath: '', // overrides style, local path is used
+        updateInterval: 5 * 60 * 1000, // display time of image in ms
+        animationSpeed: 3000, // animation speed in ms
     },
 
     start: function() {
         self = this;
         this.url = '';
-        this.eyesUrls = {
+        this.defaultUrls = {
             '1': 'https://media.giphy.com/media/l9eTgC1GpyEZq/giphy.gif',
-            '2': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0006.gif',
-            '3': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0013.gif',
-            '4': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0004.gif',
-            '5': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0093.gif',
-            '6': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0099.gif',
-            '7': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0162.gif',
-            '8': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0314.gif',
-            '9': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0300.gif',
+            '2': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0006.gif',
+            '3': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0013.gif',
+            '4': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0004.gif',
+            '5': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0093.gif',
+            '6': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0099.gif',
+            '7': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0162.gif',
+            '8': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0314.gif',
+            '9': 'https://www.animatedimages.org/data/media/35/animated-eye-image-0300.gif',
             '10': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0143.gif',
             '11': 'http://www.animatedimages.org/data/media/35/animated-eye-image-0321.gif',
             '12': 'http://www.picgifs.com/graphics/e/eyes/graphics-eyes-662258.gif',
@@ -106,7 +99,7 @@ Module.register("MMM-EyeCandy", {
             '83': 'https://www.thisiscolossal.com/wp-content/uploads/2018/08/Isopoly_03.gif',
             '84': 'https://www.thisiscolossal.com/wp-content/uploads/2018/08/Isopoly_04.gif',
             // Added 5/10/20
-            '84': 'https://media.giphy.com/media/VgBk8EZQILIaPIJymY/giphy.gif',
+            '85': 'https://media.giphy.com/media/VgBk8EZQILIaPIJymY/giphy.gif',
 
         }
 
@@ -115,14 +108,14 @@ Module.register("MMM-EyeCandy", {
             this.url = this.config.ownImagePath;
         } else {
             if (this.config.style != '') {
-                this.url = this.eyesUrls[this.config.style];
+                this.url = this.defaultUrls[this.config.style];
             }
         }
 
-        // ADDED: Schedule update timer courtesy of ninjabreadman
         var self = this;
+
         setInterval(function() {
-            self.updateDom(self.config.animationSpeed || 0); // use config.animationSpeed or revert to zero @ninjabreadman
+            self.updateDom(self.config.animationSpeed || 0); 
         }, this.config.updateInterval);
 
     },
@@ -131,29 +124,19 @@ Module.register("MMM-EyeCandy", {
         return ["MMM-EyeCandy.css"]
     },
 
-    // Override dom generator.
     getDom: function() {
         var wrapper = document.createElement("div");
         var image = document.createElement("img");
         var getTimeStamp = new Date();
-        if (this.config.ownImagePath != '') {
+        if (this.config.ownImagePath != '' || this.config.style != '') {
             image.classList.add = "photo";
             image.src = this.url + "?seed=" + getTimeStamp;
-
-            image.style.maxWidth = this.config.maxWidth;
-        } else if (this.config.style != '') {
-            image.classList.add = "photo";
-            image.src = this.url + "?seed=" + getTimeStamp;
-
             image.style.maxWidth = this.config.maxWidth;
         }
         wrapper.appendChild(image);
 
         return wrapper;
     },
-
-
-    /////  Add this function to the modules you want to control with voice //////
 
     notificationReceived: function(notification, payload) {
         if (notification === 'HIDE_EYECANDY') {
